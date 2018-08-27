@@ -16,8 +16,8 @@ return [
         'save configuration' => 'Save configuration to CrediBanco',
     ],
     'table' => [
-        'activate' => 'Activate',
-        'description' => 'Description',
+        'activate' => 'Activar',
+        'description' => 'Descripcion',
         'url_action' => 'Url Action',
         'currency' => 'Currency',
         'merchantId' => 'Merchant Id',
@@ -27,7 +27,7 @@ return [
     'form' => [
     ],
     'messages' => [
-        'info' => 'Remember to generate the keys and store them safely on the site',
+        'info' => 'Recuerde generar las LLAVES y guardarlas de forma segura en el sitio',
     ],
     'validation' => [
     ],

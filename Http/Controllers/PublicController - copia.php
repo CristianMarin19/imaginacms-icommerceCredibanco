@@ -49,6 +49,7 @@ class PublicController extends BasePublicController
         $this->user = $user;
         $this->order = $order;
 
+        //$this->urlSandbox = "http://172.19.200.82:9080/vpos2/MM/transactionStart20.do";
         $this->urlSandbox = "https://testecommerce.credibanco.com/vpos2/MM/transactionStart20.do";
         $this->urlProduction = "https://ecommerce.credibanco.com/vpos2/MM/transactionStart20.do";
 
@@ -62,9 +63,11 @@ class PublicController extends BasePublicController
     public function index(Requests $request)
     {
         
-        if($request->session()->exists('orderID')) {
+        //if($request->session()->exists('orderID')) {
 
-            $orderID = session('orderID');
+           
+            //$orderID = session('orderID');
+            $orderID = 1;
             $order = $this->order->find($orderID);
             
             $restDescription = "Order:{$orderID} - {$order->email}";
@@ -125,8 +128,7 @@ class PublicController extends BasePublicController
                     'shippingCountry' => isset($order->shipping_country) ? $order->shipping_country : "",
                     'shippingCity' => isset($order->shipping_city) ? $order->shipping_city : "",
                     'shippingAddress' => isset($order->shipping_address_1) ? $order->shipping_address_1 : "",
-                    'shippingPostalCode' => isset($order->shipping_postcode) ? $order->shipping_postcode : "",
-                    'reserved1' =>  '1'
+                    'shippingPostalCode' => isset($order->shipping_postcode) ? $order->shipping_postcode : ""
                 ];
                 
                 $xmlSalida = createXMLPHP5($arrayIn);
@@ -170,11 +172,12 @@ class PublicController extends BasePublicController
                     echo $e->getMessage();
             }
 
-        
+        /*
         }else{
             return redirect()->route('homepage');
         }
-       
+        */
+
     }
 
 
@@ -186,8 +189,8 @@ class PublicController extends BasePublicController
     public function response(Requests $request)
     {
 
-        //Log::info('CrediBanco Response - Recibiendo Respuesta '.time());
-
+        Log::info('CrediBanco: Recibiendo Respuesta'.time());
+        
         $arrayIn = array(
             'XMLRES' => $request->XMLRES,
             'DIGITALSIGN' => $request->DIGITALSIGN, 
@@ -199,10 +202,9 @@ class PublicController extends BasePublicController
         if($arrayIn['SESSIONKEY']==null || $arrayIn['XMLRES']==null || $arrayIn['DIGITALSIGN'] == null){
 
             echo "No se encuentra información Resultante";
-            
+
             Log::info('CrediBanco Response - No se encuentra información Resultante - '.time());
-            
-            return redirect()->route('homepage');
+            return false;
         }
 
         $config = new Configcredibanco();
@@ -210,11 +212,14 @@ class PublicController extends BasePublicController
 
         $VI = $config->vec;
 
-        if($config->url_action==0)
+        if($config->url_action==0){
+            $crediBanco->setUrlgate($this->urlSandbox);
             $pathKeys = "storage/app/keys/tests/";
-        else
+
+        }else{
+            $crediBanco->setUrlgate($this->urlProduction);
             $pathKeys = "storage/app/keys/";
-        
+        }
 
         $email_from = $this->setting->get('icommerce::from-email');
         $email_to = explode(',',$this->setting->get('icommerce::form-emails'));
@@ -231,114 +236,107 @@ class PublicController extends BasePublicController
             $llavesesion = BASE64URLRSA_decrypt($arrayIn['SESSIONKEY'],$cryptoPrivateRecive);
 
             $xmlDecifrado = BASE64URL_symmetric_decipher($arrayIn['XMLRES'],$llavesesion, $VI);
-
+            
             $validation = BASE64URL_digital_verify($xmlDecifrado, $arrayIn['DIGITALSIGN'], $cryptoPublicSend);
 
             $arrayOut = parseXMLPHP5($xmlDecifrado);
 
-            if($arrayOut["reserved1"]==1){
 
-                $referenceSale = explode('-',$arrayOut['purchaseOperationNumber']);
+            /*
 
-                $order = $this->order->find($referenceSale[0]);
+            $arrayOut['purchaseOperationNumber']
 
-                $products=[];
+            $products=[];
 
-                foreach ($order->products as $product) {
-                    array_push($products,[
-                        "title" => $product->title,
-                        "sku" => $product->sku,
-                        "quantity" => $product->pivot->quantity,
-                        "price" => $product->pivot->price,
-                        "total" => $product->pivot->total,
-                    ]);
-                }
-
-                $userEmail = $order->email;
-                $userFirstname = "{$order->first_name} {$order->last_name}";
-
-
-                if( $arrayOut['authorizationResult'] == "00" ) {
-                /* 00, indica que la transacción ha sido autorizada. Ejemplo errorCode: 00 errorMessage . Aprobada */
-                   
-                    $msjTheme = "icommerce::email.success_order";
-                    $msjSubject = trans('icommerce::common.emailSubject.complete')."- Order:".$order->id;
-                    $msjIntro = trans('icommerce::common.emailIntro.complete');
-                    $state = 1;
-                   
-                }else{
-
-                    if( $arrayOut['authorizationResult'] == "01" ) {
-                        /* 01, indica que la transacción ha sido rechazada por el VPOS. Ejemplo errorCode: 01 errorMessage: Negada, consulte al emisor de la tarjeta */
-                        
-                        $msjTheme = "icommerce::email.error_order";
-                        $msjSubject = trans('icommerce::common.emailSubject.failed')."- Order:".$order->id;
-                        $msjIntro = trans('icommerce::common.emailIntro.failed');
-                        $state = 6;
-                       
-
-                    }elseif( $arrayOut['authorizationResult'] == "05" ){
-                        /* 05, indica que la transacción ha sido denegada en el Banco Emisor. Ejemplo errorCode: 02  ErrorMessage: Negada, puede ser tarjeta bloqueada o timeout */
-                        
-                        $msjTheme = "icommerce::email.error_order";
-                        $msjSubject = trans('icommercecredibanco::common.emailSubject.denied')."- Order:".$order->id;
-                        $msjIntro = trans('icommercecredibanco::common.emailIntro.denied');
-                        $state = 4;
-                        
-
-                    }elseif( $arrayOut['authorizationResult'] == "08" ){
-                        /* 08, indica que la transacción ha sido anulada. Ejemplo errorCode: 08 errorMessage: La transacción fué anulada automáticamente por CyberSource */
-                        
-                        $msjTheme = "icommerce::email.error_order";
-                        $msjSubject = trans('icommercecredibanco::common.emailSubject.canceled')."- Order:".$order->id;
-                        $msjIntro = trans('icommercecredibanco::common.emailIntro.canceled');
-                        $state = 2;
-                        
-
-                    }elseif( $arrayOut['authorizationResult'] == "19" ){
-                        /* 19, indica que la transacción ha sido autorizada, sujeta a evaluación. Ejemplo errorCode: 19 errorMessage: Transacción autorizada, sujeta a evaluación */
-                        
-                        $msjTheme = "icommerce::email.error_order";
-                        $msjSubject = trans('icommerce::common.emailSubject.pending')."- Order:".$order->id;
-                        $msjIntro = trans('icommerce::common.emailIntro.pending');
-                        $state = 10;
-                       
-                    }
-
-                }
-
-                if(isset($state)){
-                    $success_process = icommerce_executePostOrder($referenceSale[0],$state,$request);
-                }
-
-                $order = $this->order->find($referenceSale[0]);
-
-                $content=[
-                    'order'=>$order,
-                    'products' => $products,
-                    'user' => $userFirstname
-                ];
-
-                icommerce_emailSend(['email_from'=>[$email_from],'theme' => $msjTheme,'email_to' => $order->email,'subject' => $msjSubject, 'sender'=>$sender,'data' => array('title' => $msjSubject,'intro'=> $msjIntro,'content'=>$content)]);
-                        
-                icommerce_emailSend(['email_from'=>[$email_from],'theme' => $msjTheme,'email_to' => $email_to,'subject' => $msjSubject, 'sender'=>$sender,'data' => array('title' => $msjSubject,'intro'=> $msjIntro,'content'=>$content)]);
-
-
-                return $this->reedirectCustomer($order);
-
-            }else{
-                return redirect()->route('icredibanco.response',[
-                    'XMLRES' => $request->XMLRES,
-                    'DIGITALSIGN' => $request->DIGITALSIGN, 
-                    'SESSIONKEY' => $request->SESSIONKEY
+            foreach ($order->products as $product) {
+                array_push($products,[
+                    "title" => $product->title,
+                    "sku" => $product->sku,
+                    "quantity" => $product->pivot->quantity,
+                    "price" => $product->pivot->price,
+                    "total" => $product->pivot->total,
                 ]);
             }
+
+            $userEmail = $order->email;
+            $userFirstname = "{$order->first_name} {$order->last_name}";
+            
+            */
+
+            if( $arrayOut['authorizationResult'] == "00" ) {
+            /* 00, indica que la transacción ha sido autorizada. Ejemplo errorCode: 00 errorMessage . Aprobada */
+               
+                // $success_process = icommerce_executePostOrder($referenceSale[0],1,$request);
+                $msjTheme = "icommerce::email.success_order";
+                //$msjSubject = trans('icommerce::common.emailSubject.complete')."- Order:".$order->id;
+                $msjIntro = trans('icommerce::common.emailIntro.complete');
+
+                //$ms = "La transacción ha sido autorizada, esta notificación será confirmada en nuestro sistema y se enviará según los paramentros seleccionados al momento de su compra.";
+                
+            }else{
+
+                if( $arrayOut['authorizationResult'] == "01" ) {
+                    /* 01, indica que la transacción ha sido rechazada por el VPOS. Ejemplo errorCode: 01 errorMessage: Negada, consulte al emisor de la tarjeta */
+                    
+                    //$success_process = icommerce_executePostOrder($referenceSale[0],6,$request);
+                    $msjTheme = "icommerce::email.error_order";
+                    //$msjSubject = trans('icommerce::common.emailSubject.failed')."- Order:".$order->id;
+                    $msjIntro = trans('icommerce::common.emailIntro.failed');
+                  
+                    //$ms = "La Transacción ha sido rechazada, consulte al emisor de la tarjeta";
+
+                }elseif( $arrayOut['authorizationResult'] == "05" ){
+                    /* 05, indica que la transacción ha sido denegada en el Banco Emisor. Ejemplo errorCode: 02  ErrorMessage: Negada, puede ser tarjeta bloqueada o timeout */
+                    
+                    //$success_process = icommerce_executePostOrder($referenceSale[0],4,$request);
+                    $msjTheme = "icommerce::email.error_order";
+                     //$msjSubject = trans('icommerce::common.emailSubject.denied')."- Order:".$order->id;
+                    $msjIntro = trans('icommerce::common.emailIntro.denied');
+
+                    //$ms = "La transacción ha sido denegada en el Banco Emisor";
+
+                }elseif( $arrayOut['authorizationResult'] == "08" ){
+                    /* 08, indica que la transacción ha sido anulada. Ejemplo errorCode: 08 errorMessage: La transacción fué anulada automáticamente por CyberSource */
+                    
+                    //$success_process = icommerce_executePostOrder($referenceSale[0],2,$request);
+                    $msjTheme = "icommerce::email.error_order";
+                     //$msjSubject = trans('icommerce::common.emailSubject.canceled')."- Order:".$order->id;
+                    $msjIntro = trans('icommerce::common.emailIntro.canceled');
+                   
+                    //$ms = "La transacción ha sido anulada";
+
+                }elseif( $arrayOut['authorizationResult'] == "19" ){
+                    /* 19, indica que la transacción ha sido autorizada, sujeta a evaluación. Ejemplo errorCode: 19 errorMessage: Transacción autorizada, sujeta a evaluación */
+                    
+                    //$success_process = icommerce_executePostOrder($referenceSale[0],10,$request);
+                    $msjTheme = "icommerce::email.error_order";
+                     //$msjSubject = trans('icommerce::common.emailSubject.pending')."- Order:".$order->id;
+                    $msjIntro = trans('icommerce::common.emailIntro.pending');
+
+                    //$ms = "La transacción ha sido autorizada más se encuentra sujeta a evaluación";
+                }
+            }
+            
+            /*
+            $order = $this->order->find($referenceSale[0]);
+
+            $content=[
+                'order'=>$order,
+                'products' => $products,
+                'user' => $userFirstname
+            ];
+
+            icommerce_emailSend(['email_from'=>[$email_from],'theme' => $msjTheme,'email_to' => $request->email_buyer,'subject' => $msjSubject, 'sender'=>$sender,'data' => array('title' => $msjSubject,'intro'=> $msjIntro,'content'=>$content)]);
+                        
+            icommerce_emailSend(['email_from'=>[$email_from],'theme' => $msjTheme,'email_to' => $email_to,'subject' => $msjSubject, 'sender'=>$sender,'data' => array('title' => $msjSubject,'intro'=> $msjIntro,'content'=>$content)]);
+            */
 
         }catch (Exception $e) {
 
             Log::info('Error en Exception'.time());
             //echo $e->getMessage();
         }
+        
 
     }
 
@@ -350,8 +348,9 @@ class PublicController extends BasePublicController
     public function confirmation(Requests $request)
     {
 
-      return redirect()->route('homepage');
-       
+        Log::info('CrediBanco - Pag Confirmation: Recibiendo Respuesta'.time());
+        //echo "pagina confirmation";
+
     }
 
 
@@ -370,30 +369,6 @@ class PublicController extends BasePublicController
         if($currency=="USD")
             return 840;
 
-    }
-
-
-    /**
-     * Reedirect Customer After all Proccess
-     * @param $order
-     * @return reedirect
-     */
-    public function reedirectCustomer($order){
-
-        $user = $this->auth->user();
-
-        if (isset($user) && !empty($user))
-            if (!empty($order))
-                return redirect()->route('icommerce.orders.show', [$order->id]);
-            else
-                return redirect()->route('homepage')
-                  ->withSuccess(trans('icommerce::common.order_success'));
-        else
-            if (!empty($order))
-                return redirect()->route('icommerce.order.showorder', [$order->id, $order->key]);
-            else
-                return redirect()->route('homepage')
-                  ->withSuccess(trans('icommerce::common.order_success'));
     }
 
 }

@@ -533,10 +533,10 @@
 
 		$crypttext = base64_decode($pas);
 
-		$crypttext2 = mcrypt_decrypt(MCRYPT_3DES, $key, $crypttext, MCRYPT_MODE_CBC, $binvi);
+		$crypttext2 = @mcrypt_decrypt(MCRYPT_3DES, $key, $crypttext, MCRYPT_MODE_CBC, $binvi);
 
 
-		$block = mcrypt_get_block_size('tripledes', 'cbc');
+		$block = @mcrypt_get_block_size('tripledes', 'cbc');
 		$packing = ord($crypttext2{strlen($crypttext2) - 1});
 		if($packing and ($packing < $block))
 		{

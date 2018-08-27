@@ -6,7 +6,6 @@
 	$cStatus = $configuration->status;
 		
 	$formID = uniqid("form_id");
-
 @endphp
 
 
@@ -32,6 +31,19 @@
 
 	    {!! Form::normalInput('currency', '*'.trans('icommercecredibanco::configcredibancos.table.currency'), $errors,$configuration,$options) !!}
 
+	    <div>
+	    	<h3>Keys names</h3>
+
+	    	{!! Form::normalInput('privateCrypto', '* Private Cryto (site.cifrado.privada.txt)', $errors,$configuration,$options) !!}
+
+	    	{!! Form::normalInput('privateSign', '* Private Sign (site.firma.privada.txt)', $errors,$configuration,$options) !!}
+
+	    	{!! Form::normalInput('publicCrypto', '* Public Crypto (LLAVE.VPOS.CRB.CRYPTO.1024.X509.txt)', $errors,$configuration,$options) !!}
+
+	    	{!! Form::normalInput('publicSign', '* Public Sign (LLAVE.VPOS.CRB.SIGN.1024.X509.txt)', $errors,$configuration,$options) !!}
+
+	    </div>
+
 		<div class="form-group">
 		    <div>
 			    <label class="checkbox-inline">
@@ -49,8 +61,14 @@
 	</div>
 	   	
 		
-	<div class="clearfix"></div>   
+	<div class="clearfix"></div>  
 
+	<div class="col-xs-12">
+		<div class="alert alert-info">
+    		<strong>Info!</strong> {{trans('icommercecredibanco::configcredibancos.messages.info')}}
+  		</div>	
+	</div>
+	
 	<div class="box-footer">
 	   <button type="submit" class="btn btn-primary btn-flat">{{ trans('icommercecredibanco::configcredibancos.button.save configuration') }}</button>
 	</div>

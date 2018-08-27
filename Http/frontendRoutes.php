@@ -10,4 +10,14 @@ use Illuminate\Routing\Router;
             'uses' => 'PublicController@index',
         ]);
 
+        $router->post('/response', [
+            'as' => 'icommercecredibanco.response',
+            'uses' => 'PublicController@response',
+        ]);
+
+        $router->get('/confirmation', [
+            'as' => 'icommercecredibanco.confirmation',
+            'uses' => 'PublicController@confirmation',
+        ]);
+
     });

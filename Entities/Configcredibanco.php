@@ -15,7 +15,10 @@ class Configcredibanco
     private $currency;
    	private $image;
    	private $status;
-
+    private $privateCrypto;
+    private $privateSign;
+    private $publicCrypto;
+    private $publicSign;
 
     public function __construct()
     {
@@ -28,6 +31,10 @@ class Configcredibanco
       $this->currency = setting('icommerceCredibanco::currency');
     	$this->image = setting('icommerceCredibanco::image');
       $this->status = setting('icommerceCredibanco::status');
+      $this->privateCrypto = setting('icommerceCredibanco::privateCrypto');
+      $this->privateSign = setting('icommerceCredibanco::privateSign');
+      $this->publicCrypto = setting('icommerceCredibanco::publicCrypto');
+      $this->publicSign = setting('icommerceCredibanco::publicSign');
 
     }
 
@@ -42,7 +49,11 @@ class Configcredibanco
             'vec' => $this->vec,
             'currency' => $this->currency,
             'image' => url($this->image),
-            'status' => $this->status
+            'status' => $this->status,
+            'privateCrypto' => $this->privateCrypto,
+            'privateSign' => $this->privateSign,
+            'publicCrypto' => $this->publicCrypto,
+            'publicSign' => $this->publicSign
         ];
     }
 
