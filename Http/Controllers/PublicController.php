@@ -6,6 +6,7 @@ use Mockery\CountValidator\Exception;
 
 use Modules\IcommerceCredibanco\Entities\Credibanco;
 use Modules\IcommerceCredibanco\Entities\Configcredibanco;
+use Modules\IcommerceCredibanco\Repositories\TransactionRepository;
 
 use Modules\Core\Http\Controllers\BasePublicController;
 use Route;
@@ -40,14 +41,16 @@ class PublicController extends BasePublicController
 
     protected $urlSandbox;
     protected $urlProduction;
+    protected $transaction;
 
-    public function __construct(Setting $setting, Authentication $auth, UserRepository $user,  OrderRepository $order)
+    public function __construct(Setting $setting, Authentication $auth, UserRepository $user,  OrderRepository $order, TransactionRepository $transaction)
     {
 
         $this->setting = $setting;
         $this->auth = $auth;
         $this->user = $user;
         $this->order = $order;
+        $this->transaction = $transaction;
 
         $this->urlSandbox = "https://testecommerce.credibanco.com/vpos2/MM/transactionStart20.do";
         $this->urlProduction = "https://ecommerce.credibanco.com/vpos2/MM/transactionStart20.do";
@@ -264,7 +267,7 @@ class PublicController extends BasePublicController
                     $msjTheme = "icommerce::email.success_order";
                     $msjSubject = trans('icommerce::common.emailSubject.complete')."- Order:".$order->id;
                     $msjIntro = trans('icommerce::common.emailIntro.complete');
-                    $state = 1;
+                    $state = 12;
                    
                 }else{
 
@@ -323,8 +326,10 @@ class PublicController extends BasePublicController
                         
                 icommerce_emailSend(['email_from'=>[$email_from],'theme' => $msjTheme,'email_to' => $email_to,'subject' => $msjSubject, 'sender'=>$sender,'data' => array('title' => $msjSubject,'intro'=> $msjIntro,'content'=>$content)]);
 
+                $transaction = $this->generateVoucher($order,$arrayOut,1,$config);
 
-                return $this->reedirectCustomer($order);
+                return $this->reedirectCustomerVoucher($order);
+                
 
             }else{
                 return redirect()->route('icredibanco.response',[
@@ -372,28 +377,86 @@ class PublicController extends BasePublicController
 
     }
 
+     /**
+     * Generate Voucher
+     * @param  $order
+     * @param  $arrayOut
+     * @param  $type (1 = IcommerceCredibanco , 2 = Icredibanco)
+     * @param  $config
+     * @return transaction
+     */
+    public function generateVoucher($order,$arrayOut,$type,$config){
+        
+        $data = array(
+           'order_id' => $order->id,
+           'order_status' => $order->order_status,
+           'type' => $type,
+           'commerceId' => $arrayOut['commerceId'],
+           'operationDate' => $order->updated_at,
+           'terminalCode' => $arrayOut['purchaseTerminalCode'],
+           'operationNumber' => $arrayOut['purchaseOperationNumber'],
+            'currency' =>  $config->currency,
+            'amount' => $order->total,
+            'tax' => (!empty($order->tax_amount)?$order->tax_amount:0),
+            'description' => $arrayOut['additionalObservations'],
+            'errorCode' => $arrayOut['errorCode'],
+            'errorMessage' => $arrayOut['errorMessage'],
+            'authorizationCode' => isset($arrayOut['authorizationCode'])?$arrayOut['authorizationCode']:'',
+            'authorizationResult' => $arrayOut['authorizationResult']
+        );
+
+       $transaction = $this->transaction->create($data);
+
+       return $transaction;
+
+    }
 
     /**
-     * Reedirect Customer After all Proccess
+     * Reedirect To Voucher Customer After all Proccess
      * @param $order
      * @return reedirect
      */
-    public function reedirectCustomer($order){
+    public function reedirectCustomerVoucher($order){
 
         $user = $this->auth->user();
 
         if (isset($user) && !empty($user))
             if (!empty($order))
-                return redirect()->route('icommerce.orders.show', [$order->id]);
+                return redirect()->route('icommercecredibanco.voucher.show', [$order->id]);
             else
                 return redirect()->route('homepage')
                   ->withSuccess(trans('icommerce::common.order_success'));
         else
             if (!empty($order))
-                return redirect()->route('icommerce.order.showorder', [$order->id, $order->key]);
+                return redirect()->route('icommercecredibanco.voucher.showvoucher', [$order->id, $order->key]);
             else
                 return redirect()->route('homepage')
                   ->withSuccess(trans('icommerce::common.order_success'));
+  
     }
+
+    /**
+     * Show Voucher
+     * @param  $request
+     * @return view
+     */
+    public function voucherShow(Requests $request){
+       
+        if (!isset($request->key)) {
+            $user = $this->auth->user();
+            $order = $this->order->findByUser($request->id, $user->id);
+          }else{
+            $order = $this->order->findByKey($request->id, $request->key);
+        }
+
+        $transaction = $this->transaction->findByOrder($order->id);
+        $commerceName  = $this->setting->get('core::site-name');
+
+        $tpl ='icommercecredibanco::frontend.index';
+        return view($tpl, compact('transaction','order','commerceName'));
+
+    }
+
+
 
 }

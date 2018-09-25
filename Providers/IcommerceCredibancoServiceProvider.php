@@ -29,8 +29,11 @@ class IcommerceCredibancoServiceProvider extends ServiceProvider
         $this->app['events']->listen(BuildingSidebar::class, RegisterIcommerceCredibancoSidebar::class);
 
         $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
-            $event->load('configcredibancos', array_dot(trans('icommercecredibanco::configcredibancos')));
+            $event->load('configcredibancos', array_dot(trans('icommercecredibanco::configcredibancos'))); 
+            $event->load('transactions', array_dot(trans('icommercecredibanco::transactions')));
             // append translations
+
+
 
         });
     }
@@ -66,7 +69,21 @@ class IcommerceCredibancoServiceProvider extends ServiceProvider
                 return new \Modules\IcommerceCredibanco\Repositories\Cache\CacheConfigcredibancoDecorator($repository);
             }
         );
+        $this->app->bind(
+            'Modules\IcommerceCredibanco\Repositories\TransactionRepository',
+            function () {
+                $repository = new \Modules\IcommerceCredibanco\Repositories\Eloquent\EloquentTransactionRepository(new \Modules\IcommerceCredibanco\Entities\Transaction());
+
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\IcommerceCredibanco\Repositories\Cache\CacheTransactionDecorator($repository);
+            }
+        );
 // add bindings
+
+
 
     }
 }

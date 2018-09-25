@@ -20,4 +20,16 @@ use Illuminate\Routing\Router;
             'uses' => 'PublicController@confirmation',
         ]);
 
+        $router->get('voucher/order/{id}', [
+            'as' => 'icommercecredibanco.voucher.show',
+            'uses' => 'PublicController@voucherShow',
+            'middleware' => 'logged.in'
+        ]);
+
+        $router->get('voucher/order/{id}/{key}', [
+            'as' => 'icommercecredibanco.voucher.showvoucher',
+            'uses' => 'PublicController@voucherShow',
+            'middleware' => 'auth.guest',
+        ]);
+
     });

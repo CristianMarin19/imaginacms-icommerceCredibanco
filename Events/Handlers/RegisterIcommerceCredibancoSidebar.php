@@ -52,7 +52,9 @@ class RegisterIcommerceCredibancoSidebar implements \Maatwebsite\Sidebar\Sidebar
                         $this->auth->hasAccess('icommercecredibanco.configcredibancos.index')
                     );
                 });
+                
 // append
+
 
             });
         });
