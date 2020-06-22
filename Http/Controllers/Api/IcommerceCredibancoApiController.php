@@ -4,7 +4,7 @@ namespace Modules\Icommercecredibanco\Http\Controllers\Api;
 
 // Requests & Response
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Modules\Icommercecredibanco\Http\Requests\InitRequest;
 
 // Base Api
 use Modules\Icommerce\Http\Controllers\Api\OrderApiController;
@@ -73,7 +73,11 @@ class IcommerceCredibancoApiController extends BaseApiController
     public function init(Request $request){
 
         try {
+
+            $data = $request->all();
            
+            $this->validateRequestApi(new InitRequest($data));
+
             $orderID = $request->orderID;
             \Log::info('Module Icommercecredibanco: Init-ID:'.$orderID);
 
