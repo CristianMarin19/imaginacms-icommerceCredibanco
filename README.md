@@ -2,7 +2,9 @@
 
 ## Seeder
 
-    run php artisan module:seed Icommercecredibanco
+    ```
+    php artisan module:seed Icommercecredibanco
+    ```
 
 ## Configurations
 
