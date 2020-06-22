@@ -1,0 +1,20 @@
+{
+    "name": "Icommercecredibanco",
+    "alias": "icommercecredibanco",
+    "description": "",
+    "keywords": [],
+    "version": "2.0.0",
+	"active": 1,
+    "order": 1,
+    "providers": [
+        "Modules\\Icommercecredibanco\\Providers\\IcommercecredibancoServiceProvider",
+        "Modules\\Icommercecredibanco\\Providers\\RouteServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "helpers.php",
+        "Support/lib/mySoap/xmlseclibs.php",
+        "Support/beans/vpos_plugin.php"
+    ],
+    "requires": []
+}
