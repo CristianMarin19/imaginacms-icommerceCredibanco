@@ -18,3 +18,37 @@ if (!function_exists('icommercecredibanco_currencyISO')) {
     }
 
 }
+
+/**
+* Delete _es URL 
+* @param
+* @return newurl
+*/
+if (!function_exists('icommercecredibanco_processUrl')) {
+    function icommercecredibanco_processUrl($url){
+
+        $caracter = "_es";
+        $newUrl = str_replace($caracter,"", $url);
+        return $newUrl;
+
+    }
+}
+
+
+/**
+* Format total value
+* @param $total
+* @return Total
+*/
+if (!function_exists('icommercecredibanco_formatTotal')) {
+
+    function icommercecredibanco_formatTotal($total){
+       
+        $newTotal = number_format($total, 0, '.', '');
+        $newTotal2 = $newTotal ."00";
+
+        return $newTotal2;
+
+    }
+
+}

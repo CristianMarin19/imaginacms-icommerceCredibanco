@@ -17,8 +17,6 @@ use Modules\Icommercecredibanco\Repositories\IcommerceCredibancoRepository;
 use Modules\Icommerce\Repositories\PaymentMethodRepository;
 use Modules\Icommerce\Repositories\TransactionRepository;
 use Modules\Icommerce\Repositories\OrderRepository;
-use Modules\Icommerce\Repositories\CurrencyRepository;
-
 
 class IcommerceCredibancoApiController extends BaseApiController
 {
@@ -29,7 +27,6 @@ class IcommerceCredibancoApiController extends BaseApiController
     private $orderController;
     private $transaction;
     private $transactionController;
-    private $currency;
 
     protected $urlSandbox;
     protected $urlProduction;
@@ -44,8 +41,7 @@ class IcommerceCredibancoApiController extends BaseApiController
         OrderRepository $order,
         OrderApiController $orderController,
         TransactionRepository $transaction,
-        TransactionApiController $transactionController,
-        CurrencyRepository $currency
+        TransactionApiController $transactionController
     ){
 
         $this->icommercecredibanco = $icommercecredibanco;
@@ -54,7 +50,6 @@ class IcommerceCredibancoApiController extends BaseApiController
         $this->orderController = $orderController;
         $this->transaction = $transaction;
         $this->transactionController = $transactionController;
-        $this->currency = $currency;
 
         $this->urlSandbox = "https://ecouat.credibanco.com/payment/rest/register.do";
         $this->urlProduction = "https://eco.credibanco.com/payment/rest/register.do";
@@ -109,7 +104,8 @@ class IcommerceCredibancoApiController extends BaseApiController
                     ]))
                 );
                 
-                $redirectRoute = $data->formUrl;
+
+                $redirectRoute = icommercecredibanco_processUrl($data->formUrl);
 
             }else{
                 \Log::info('Module Icommercecredibanco: Credibanco Response ErrorCode: '.$data->errorCode);
@@ -210,7 +206,7 @@ class IcommerceCredibancoApiController extends BaseApiController
             "userName" => $paymentMethod->options->user,
             "password" => $paymentMethod->options->password,
             "orderNumber" => $orderRefCommerce,
-            "amount" => $order->total,
+            "amount" => icommercecredibanco_formatTotal($order->total),
             "currency" => icommercecredibanco_currencyISO($order->currency_code),
             "returnUrl" => route("icommercecredibanco.voucher.show",[$order->id,$transaction->id]),
             "jsonParams" => json_encode($jParams)
@@ -302,9 +298,11 @@ class IcommerceCredibancoApiController extends BaseApiController
         }else if($orderStatus == 5){
             //Autorización iniciada a través de ACS del banco emisor;
             $newstatusOrder = 1; //Processing
+
         }else if($orderStatus == 6){
             //Autorización denegada.
             $newstatusOrder = 6; //denied
+
         }else{
             $newstatusOrder = 7; // Status Order Failed
         }
@@ -364,7 +362,5 @@ class IcommerceCredibancoApiController extends BaseApiController
         return $orderRefCommerce;
 
     }
-
-    
 
 }
