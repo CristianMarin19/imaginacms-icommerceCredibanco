@@ -28,12 +28,9 @@ class IcommerceCredibancoApiController extends BaseApiController
     private $transaction;
     private $transactionController;
 
-    protected $urlSandbox;
-    protected $urlProduction;
-
-    protected $orderStatusSandbox;
-    protected $orderStatusProduction;
-
+    protected $urlsSandbox;
+    protected $urlsProduction;
+    
     public function __construct(
 
         IcommerceCredibancoRepository $icommercecredibanco,
@@ -51,11 +48,15 @@ class IcommerceCredibancoApiController extends BaseApiController
         $this->transaction = $transaction;
         $this->transactionController = $transactionController;
 
-        $this->urlSandbox = "https://ecouat.credibanco.com/payment/rest/register.do";
-        $this->urlProduction = "https://eco.credibanco.com/payment/rest/register.do";
+        $this->urlsSandbox = array(
+            "register" => "https://ecouat.credibanco.com/payment/rest/register.do",
+            "getOrderExtend" => "https://ecouat.credibanco.com/payment/rest/getOrderStatusExtended.do"
+        );
 
-        $this->orderStatusSandbox = "https://ecouat.credibanco.com/payment/rest/getOrderStatusExtended.do";
-        $this->orderStatusProduction = "https://eco.credibanco.com/payment/rest/getOrderStatusExtended.do";
+        $this->urlsProductions = array(
+            "register" => "https://eco.credibanco.com/payment/rest/register.do",
+            "getOrderExtend" => "https://eco.credibanco.com/payment/rest/getOrderStatusExtended.do"
+        );
 
     }
     
@@ -213,9 +214,9 @@ class IcommerceCredibancoApiController extends BaseApiController
         );
 
         if($paymentMethod->options->mode=="sandbox")
-            $endPoint = $this->urlSandbox;
+            $endPoint = $this->urlsSandbox["register"];
         else
-            $endPoint = $this->urlProduction;
+            $endPoint = $this->urlsProduction["register"];
 
         // SEND DATA CREDIBANCO AND GET URL
         $client = new \GuzzleHttp\Client();
@@ -249,9 +250,9 @@ class IcommerceCredibancoApiController extends BaseApiController
         );
 
         if($paymentMethod->options->mode=="sandbox")
-            $endPoint = $this->orderStatusSandbox;
+            $endPoint = $this->urlsSandbox["getOrderExtend"];
         else
-            $endPoint = $this->orderStatusProduction;
+            $endPoint = $this->urlsProduction["getOrderExtend"];
 
         // SEND DATA CREDIBANCO AND GET URL
         $client = new \GuzzleHttp\Client();
