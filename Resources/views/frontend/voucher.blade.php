@@ -67,12 +67,20 @@
                         <td>{{$data->order->tax_amount?$order->tax_amount:0}}</td>
                     </tr>
                     <tr>
-                        <td>Respuesta Code Credibanco:</td>
+                        <td>Respuesta Order Status Code - Credibanco:</td>
                         <td>{{$data->dataCredibanco->orderStatus}}</td>
-                    </tr>     
+                    </tr>
                     <tr>
-                        <td>Respuesta Credibanco:</td>
-                        <td>{{$data->dataCredibanco->actionCodeDescription}}</td>
+                        <td>Respuesta Action Code - Credibanco:</td>
+                        <td>{{$data->dataCredibanco->actionCode}}</td>
+                    </tr>
+                    <tr>
+                        <td>Respuesta Action Code Description - Credibanco:</td>
+                        @if(!empty($data->dataCredibanco->actionCodeDescription))
+                            <td>{{$data->dataCredibanco->actionCodeDescription}}</td>
+                        @else
+                            <td>{{$data->dataCredibanco->errorMessage}}</td>
+                        @endif
                     </tr>
                     
                 </tbody>

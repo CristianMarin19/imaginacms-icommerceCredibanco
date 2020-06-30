@@ -302,7 +302,7 @@ class IcommerceCredibancoApiController extends BaseApiController
 
         }else if($orderStatus == 6){
             //Autorización denegada.
-            $newstatusOrder = 6; //denied
+            $newstatusOrder = 5; //denied
 
         }else{
             $newstatusOrder = 7; // Status Order Failed
