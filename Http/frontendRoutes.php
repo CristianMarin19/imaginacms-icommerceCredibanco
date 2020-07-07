@@ -6,7 +6,7 @@ use Illuminate\Routing\Router;
         $locale = LaravelLocalization::setLocale() ?: App::getLocale();
 
     
-        $router->get('voucher/order/{id}/{tid}', [
+        $router->get('voucher/order/{id}/{tid?}', [
             'as' => 'icommercecredibanco.voucher.show',
             'uses' => 'PublicController@voucherShow',
         ]);

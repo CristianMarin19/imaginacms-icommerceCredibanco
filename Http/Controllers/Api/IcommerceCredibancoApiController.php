@@ -18,6 +18,8 @@ use Modules\Icommerce\Repositories\PaymentMethodRepository;
 use Modules\Icommerce\Repositories\TransactionRepository;
 use Modules\Icommerce\Repositories\OrderRepository;
 
+use Modules\Icommerce\Entities\Transaction as TransEnti;
+
 class IcommerceCredibancoApiController extends BaseApiController
 {
 
@@ -142,7 +144,13 @@ class IcommerceCredibancoApiController extends BaseApiController
         try {
 
             $orderID = $request->id;
-            $transactionID = $request->tid;
+
+            if(isset($request->tid))
+                $transactionID = $request->tid;
+            else{
+                $transaction = TransEnti::where('order_id',$orderID)->latest()->first();
+                $transactionID = $transaction->id;
+            }
 
             \Log::info('Module Icommercecredibanco: GetUpdateOrder - orderID: '.$orderID);
             \Log::info('Module Icommercecredibanco: GetUpdateOrder - transactionID: '.$transactionID);
@@ -150,7 +158,8 @@ class IcommerceCredibancoApiController extends BaseApiController
             $paymentMethod = $this->getPaymentMethodConfiguration();
 
             $order = $this->order->find($orderID);
-            $transaction = $this->transaction->find($transactionID);
+            if(!isset($transaction))
+                $transaction = $this->transaction->find($transactionID);
 
             // Get order data Credibanco
             $response = $this->getOrderStatusExtendedCredibanco($paymentMethod,$order,$transaction); 
