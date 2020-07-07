@@ -12,9 +12,7 @@
     ],
     "aliases": {},
     "files": [
-        "helpers.php",
-        "Support/lib/mySoap/xmlseclibs.php",
-        "Support/beans/vpos_plugin.php"
+        "helpers.php"
     ],
     "requires": []
 }

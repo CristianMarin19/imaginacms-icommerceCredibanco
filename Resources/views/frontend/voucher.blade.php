@@ -59,7 +59,7 @@
 
                     <tr>
                         <td>Total:</td>
-                        <td>{{formatMoney($data->dataCredibanco->amount)}}</td>
+                        <td>{{formatMoney($data->order->total)}}</td>
                     </tr>
 
                     <tr>
