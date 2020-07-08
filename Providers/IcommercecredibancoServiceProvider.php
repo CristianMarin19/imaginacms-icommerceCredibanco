@@ -8,6 +8,8 @@ use Modules\Core\Events\BuildingSidebar;
 use Modules\Core\Events\LoadingBackendTranslations;
 use Modules\Icommercecredibanco\Events\Handlers\RegisterIcommercecredibancoSidebar;
 
+use Modules\Icommercecredibanco\Console\CheckUpdateOrders;
+
 class IcommercecredibancoServiceProvider extends ServiceProvider
 {
     use CanPublishConfiguration;
@@ -35,6 +37,9 @@ class IcommercecredibancoServiceProvider extends ServiceProvider
 
 
         });
+
+        $this->registerCommands();
+
     }
 
     public function boot()
@@ -85,4 +90,23 @@ class IcommercecredibancoServiceProvider extends ServiceProvider
 
 
     }
+
+    /**
+     * Register all commands for this module
+     */
+    private function registerCommands()
+    {
+        $this->registerIcommercecredibancoCommand();
+    }
+
+    /**
+     * Register the refresh thumbnails command
+     */
+    private function registerIcommercecredibancoCommand()
+    {
+
+        $this->app['command.icommercecredibanco.updateorders'] = $this->app->make(CheckUpdateOrders::class);;
+        $this->commands(['command.icommercecredibanco.updateorders']);
+    }
+
 }
