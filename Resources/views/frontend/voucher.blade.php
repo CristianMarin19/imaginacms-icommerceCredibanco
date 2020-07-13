@@ -31,10 +31,21 @@
                         <td>Orden Referencia del Comercio:</td>
                         <td>{{$data->orderRefCommerce}}</td>
                     </tr>
-
+                    {{--
                     <tr>
                         <td>Orden Status del Comercio:</td>
                         <td>{{$data->orderStatus->title}}</td>
+                    </tr>
+                    --}}
+
+                    <tr>
+                        <td>Cod Unico del Comercio:</td>
+                        <td>{{$data->paymentMethod->options->merchantId}}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Estado de la transacción:</td>
+                        <td>{{$data->dataCredibanco->paymentAmountInfo->paymentState}}</td>
                     </tr>
 
                     <tr>
@@ -43,14 +54,40 @@
                     </tr>
 
                     <tr>
+                        <td>Hora:</td>
+                        <td>{{format_date($data->order->created_at,"%r")}}</td>
+                    </tr>
+
+                    <tr>
                         <td>Nro de Terminal:</td>
                         <td>{{$data->dataCredibanco->terminalId}}</td>
                     </tr>
 
+                    @isset($data->dataCredibanco->cardAuthInfo)
+
+                        <tr>
+                            <td>Nro de Autorización:</td>
+                            <td>{{$data->dataCredibanco->cardAuthInfo->approvalCode}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Franquicia:</td>
+                            <td>{{$data->dataCredibanco->cardAuthInfo->paymentSystem}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Tarjeta:</td>
+                            <td>{{icommercecredibanco_formatCardNumber($data->dataCredibanco->cardAuthInfo->pan)}}</td>
+                        </tr>
+
+                    @endisset
+
+                    {{--
                     <tr>
                         <td>Nro Orden CrediBanco:</td>
                         <td>{{$data->orderIdCredibanco}}</td>
                     </tr>
+                    --}}
 
                     <tr>
                         <td>Moneda:</td>
@@ -66,10 +103,12 @@
                         <td>IVA:</td>
                         <td>{{$data->order->tax_amount?$order->tax_amount:0}}</td>
                     </tr>
+                    {{--
                     <tr>
                         <td>Respuesta Order Status Code - Credibanco:</td>
                         <td>{{$data->dataCredibanco->orderStatus}}</td>
                     </tr>
+                    --}}
                     <tr>
                         <td>Respuesta Action Code - Credibanco:</td>
                         <td>{{$data->dataCredibanco->actionCode}}</td>

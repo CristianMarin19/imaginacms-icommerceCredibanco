@@ -171,6 +171,7 @@ class IcommerceCredibancoApiController extends BaseApiController
             // Response
             $response = [ 'data' => [
                 "dataCredibanco" => $data,
+                "paymentMethod" => $paymentMethod,
                 "order" => $orderUP,
                 "orderIdCredibanco" => $transaction->external_code,
                 "orderRefCommerce" => $this->getOrderRefCommerce($orderUP,$transaction),

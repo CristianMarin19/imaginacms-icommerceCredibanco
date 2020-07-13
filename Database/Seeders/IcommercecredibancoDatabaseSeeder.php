@@ -23,6 +23,7 @@ class IcommercecredibancoDatabaseSeeder extends Seeder
         $options['mainimage'] = null;
         $options['user'] = "";
         $options['password'] = "";
+        $options['merchantId'] = "";
         $options['mode'] = "sandbox";
 
        
