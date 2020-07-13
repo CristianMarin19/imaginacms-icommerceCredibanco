@@ -64,9 +64,7 @@ if (!function_exists('icommercecredibanco_formatCardNumber')) {
     function icommercecredibanco_formatCardNumber($cardNumber){
        
         $cardNumberBroked = explode("**",$cardNumber);
-
         $newNro = str_repeat("*", strlen($cardNumberBroked[0]));
-
         $newCardNumber = $newNro.'**'.$cardNumberBroked[1];
 
         return $newCardNumber;

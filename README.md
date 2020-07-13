@@ -10,4 +10,5 @@ php artisan module:seed Icommercecredibanco
 
     - user
     - password
+    - merchant Id
     - mode
