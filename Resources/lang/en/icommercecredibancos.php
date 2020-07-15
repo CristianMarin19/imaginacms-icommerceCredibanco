@@ -32,4 +32,8 @@ return [
     ],
     'validation' => [
     ],
+    'statusTransaction' => [
+        'approved'        => 'Approved',
+        'denied'           => 'Denied',
+    ],
 ];

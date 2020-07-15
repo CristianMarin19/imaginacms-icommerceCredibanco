@@ -55,7 +55,7 @@ if (!function_exists('icommercecredibanco_formatTotal')) {
 
 
 /**
-* Format T
+* Format Card Number to Voucher
 * @param $nroT
 * @return nroT
 */
@@ -68,6 +68,26 @@ if (!function_exists('icommercecredibanco_formatCardNumber')) {
         $newCardNumber = $newNro.'**'.$cardNumberBroked[1];
 
         return $newCardNumber;
+
+    }
+
+}
+
+/**
+* Get Status Transaction To Voucher
+* @param data
+* @return status
+*/
+if (!function_exists('icommercecredibanco_GetStatusTransaction')) {
+
+    function icommercecredibanco_GetStatusTransaction($data){
+       
+        $status = trans("icommercecredibanco::icommercecredibancos.statusTransaction.denied");
+        if($data->actionCode==0 && isset($data->cardAuthInfo->approvalCode)){
+            $status = trans("icommercecredibanco::icommercecredibancos.statusTransaction.approved");
+        }
+
+        return $status;
 
     }
 

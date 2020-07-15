@@ -45,7 +45,10 @@
 
                     <tr>
                         <td>Estado de la transacción:</td>
+                        <td class="text-uppercase">{{icommercecredibanco_GetStatusTransaction($data->dataCredibanco)}}</td>
+                        {{--
                         <td>{{$data->dataCredibanco->paymentAmountInfo->paymentState}}</td>
+                        --}}
                     </tr>
 
                     <tr>
