@@ -226,7 +226,9 @@ class IcommerceCredibancoApiController extends BaseApiController
         if($paymentMethod->options->mode=="sandbox")
             $endPoint = $this->urlsSandbox["register"];
         else
-            $endPoint = $this->urlsProduction["register"];
+            $endPoint = $this->urlsProductions["register"];
+
+        \Log::info('Module Icommercecredibanco: EndPoint: '.$endPoint);
 
         // SEND DATA CREDIBANCO AND GET URL
         $client = new \GuzzleHttp\Client();
@@ -262,7 +264,7 @@ class IcommerceCredibancoApiController extends BaseApiController
         if($paymentMethod->options->mode=="sandbox")
             $endPoint = $this->urlsSandbox["getOrderExtend"];
         else
-            $endPoint = $this->urlsProduction["getOrderExtend"];
+            $endPoint = $this->urlsProductions["getOrderExtend"];
 
         // SEND DATA CREDIBANCO AND GET URL
         $client = new \GuzzleHttp\Client();
