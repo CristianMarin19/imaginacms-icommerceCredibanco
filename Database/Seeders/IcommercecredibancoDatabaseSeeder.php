@@ -18,44 +18,51 @@ class IcommercecredibancoDatabaseSeeder extends Seeder
 
         Model::unguard();
 
-        $options['init'] = "Modules\Icommercecredibanco\Http\Controllers\Api\IcommerceCredibancoApiController";
+        $name = config('asgard.icommercecredibanco.config.paymentName');
+        $result = PaymentMethod::where('name',$name)->first();
 
-        $options['mainimage'] = null;
-        $options['user'] = "";
-        $options['password'] = "";
-        $options['merchantId'] = "";
-        $options['mode'] = "sandbox";
+        if(!$result){
+            $options['init'] = "Modules\Icommercecredibanco\Http\Controllers\Api\IcommerceCredibancoApiController";
 
-       
-        $titleTrans = 'icommercecredibanco::icommercecredibancos.single';
-        $descriptionTrans = 'icommercecredibanco::icommercecredibancos.description';
+            $options['mainimage'] = null;
+            $options['user'] = "";
+            $options['password'] = "";
+            $options['merchantId'] = "";
+            $options['mode'] = "sandbox";
 
-        foreach (['en', 'es'] as $locale) {
+           
+            $titleTrans = 'icommercecredibanco::icommercecredibancos.single';
+            $descriptionTrans = 'icommercecredibanco::icommercecredibancos.description';
 
-            if($locale=='en'){
-                $params = array(
-                    'title' => trans($titleTrans),
-                    'description' => trans($descriptionTrans),
-                    'name' => config('asgard.icommercecredibanco.config.paymentName'),
-                    'active' => 0,
-                    'options' => $options
-                );
+            foreach (['en', 'es'] as $locale) {
 
-                $paymentMethod = PaymentMethod::create($params);
-                
-            }else{
+                if($locale=='en'){
+                    $params = array(
+                        'title' => trans($titleTrans),
+                        'description' => trans($descriptionTrans),
+                        'name' => $name,
+                        'status' => 1,
+                        'options' => $options
+                    );
 
-                $title = trans($titleTrans,[],$locale);
-                $description = trans($descriptionTrans,[],$locale);
+                    $paymentMethod = PaymentMethod::create($params);
+                    
+                }else{
 
-                $paymentMethod->translateOrNew($locale)->title = $title;
-                $paymentMethod->translateOrNew($locale)->description = $description;
+                    $title = trans($titleTrans,[],$locale);
+                    $description = trans($descriptionTrans,[],$locale);
 
-                $paymentMethod->save();
-            }
+                    $paymentMethod->translateOrNew($locale)->title = $title;
+                    $paymentMethod->translateOrNew($locale)->description = $description;
 
-        }// Foreach
+                    $paymentMethod->save();
+                }
 
+            }// Foreach
+
+        }else{
+            $this->command->alert("This method has already been installed !!");
+        }
         
     }
 }
