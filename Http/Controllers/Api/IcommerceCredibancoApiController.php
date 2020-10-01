@@ -85,6 +85,10 @@ class IcommerceCredibancoApiController extends BaseApiController
             $order = $this->order->find($orderID);
             $statusOrder = 1; // Processing
 
+            // Validate minimum amount order
+            if($order->total<$paymentMethod->options->minimunAmount)
+              throw new Exception('Total order minimum not allowed', 204);
+
             // Create Transaction
             $transaction = $this->validateResponseApi(
                 $this->transactionController->create(new Request( ["attributes" => [

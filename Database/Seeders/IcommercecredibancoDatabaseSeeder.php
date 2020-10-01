@@ -29,8 +29,8 @@ class IcommercecredibancoDatabaseSeeder extends Seeder
             $options['password'] = "";
             $options['merchantId'] = "";
             $options['mode'] = "sandbox";
+            $options['minimunAmount'] = 0;
 
-           
             $titleTrans = 'icommercecredibanco::icommercecredibancos.single';
             $descriptionTrans = 'icommercecredibanco::icommercecredibancos.description';
 
