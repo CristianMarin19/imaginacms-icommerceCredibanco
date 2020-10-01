@@ -1,8 +1,8 @@
-# asgardcms-icommercecredibanco
+# imaginacms-icommercecredibanco (PaymentMethod)
 
 ## Seeder
 
-```
+```bash
 php artisan module:seed Icommercecredibanco
 ```
 
