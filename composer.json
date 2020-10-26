@@ -40,11 +40,6 @@
             "dev-master": "4.0.x-dev"
         }
     },
-    "scripts": {
-        "post-install-cmd": [
-            "@php artisan module:seed Icommercecredibanco"
-        ]
-    },
     "autoload": {
         "psr-4": {
             "Modules\\Icommercecredibanco\\": ""
