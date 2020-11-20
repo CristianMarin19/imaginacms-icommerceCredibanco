@@ -2,6 +2,7 @@
 
 namespace Modules\Icommercecredibanco\Providers;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\Traits\CanPublishConfiguration;
 use Modules\Core\Events\BuildingSidebar;
@@ -31,8 +32,8 @@ class IcommercecredibancoServiceProvider extends ServiceProvider
         $this->app['events']->listen(BuildingSidebar::class, RegisterIcommercecredibancoSidebar::class);
 
         $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
-            $event->load('icommercecredibancos', array_dot(trans('icommercecredibanco::icommercecredibancos')));
-            $event->load('transactions', array_dot(trans('icommercecredibanco::transactions')));
+            $event->load('icommercecredibancos', Arr::dot(trans('icommercecredibanco::icommercecredibancos')));
+            $event->load('transactions', Arr::dot(trans('icommercecredibanco::transactions')));
             // append translations
 
 
