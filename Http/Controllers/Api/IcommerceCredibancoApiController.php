@@ -375,8 +375,16 @@ class IcommerceCredibancoApiController extends BaseApiController
      */
     public function getOrderRefCommerce($order,$transaction){
 
-        $orderRefCommerce = $order->id."-".$transaction->id;
-        return $orderRefCommerce;
+        //Fix: orderRefCommerce changed by only transaction->id as of the date 11/12/2020
+        $orderDate = new \DateTime($order->created_at);
+        $dateFrom = new \DateTime('2020-12-11');
+        
+        if($orderDate < $dateFrom){
+          return $order->id."-".$transaction->id;
+        }else{
+          return $transaction->id;
+        }
+        
 
     }
 

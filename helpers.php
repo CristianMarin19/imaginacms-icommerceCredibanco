@@ -81,9 +81,9 @@ if (!function_exists('icommercecredibanco_formatCardNumber')) {
 if (!function_exists('icommercecredibanco_GetStatusTransaction')) {
 
     function icommercecredibanco_GetStatusTransaction($data){
-       
+
         $status = trans("icommercecredibanco::icommercecredibancos.statusTransaction.denied");
-        if($data->actionCode==0 && isset($data->cardAuthInfo->approvalCode)){
+        if($data->actionCode==0 && (isset($data->cardAuthInfo->approvalCode) || (isset($data->paymentWay) && $data->paymentWay == "PSE"))){
             $status = trans("icommercecredibanco::icommercecredibancos.statusTransaction.approved");
         }
 
