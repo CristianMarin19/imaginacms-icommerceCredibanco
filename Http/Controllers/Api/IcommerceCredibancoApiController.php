@@ -87,7 +87,7 @@ class IcommerceCredibancoApiController extends BaseApiController
 
             // Validate minimum amount order
             if(isset($paymentMethod->options->minimunAmount) && $order->total<$paymentMethod->options->minimunAmount)
-              throw new Exception('Total order minimum not allowed', 204);
+              throw new \Exception('Total order minimum not allowed', 204);
 
             // Create Transaction
             $transaction = $this->validateResponseApi(
