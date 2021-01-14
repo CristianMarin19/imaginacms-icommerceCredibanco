@@ -16,6 +16,8 @@ return [
         'create icommercecredibanco' => 'Create a icommercecredibanco',
     ],
     'table' => [
+        'user' => 'User',
+        'password' => 'Password',
         'merchantId' => 'Merchant Id',
         'nroTerminal' => 'Nro Terminal',
         'vec' => 'Vector',
