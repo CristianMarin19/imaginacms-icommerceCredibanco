@@ -129,7 +129,13 @@
               
             </table>
             
-            
+                @if (!empty($data->order))
+                    <div class="text-center">
+                        <a href="{{$data->order->url)}}" class="btn btn-primary">Ver Orden</a>
+                    </div>
+                @endif
+
+                {{--
                 @if(isset($currentUser))
                     @if (!empty($data->order))
                     <div class="text-center">
@@ -141,6 +147,7 @@
                         <a href="{{route(locale().'.icommerce.order.showorder',[$order->id, $order->key])}}" class="btn btn-primary">Ver Orden</a>
                     @endif
                 @endif
+                --}}
 
                 <div class="text-center my-2">
                     <a href="{{route('homepage')}}" class="btn btn-primary">Home</a>
