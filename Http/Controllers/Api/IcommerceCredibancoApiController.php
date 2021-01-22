@@ -179,7 +179,8 @@ class IcommerceCredibancoApiController extends BaseApiController
                 "order" => $orderUP,
                 "orderIdCredibanco" => $transaction->external_code,
                 "orderRefCommerce" => $this->getOrderRefCommerce($orderUP,$transaction),
-                "orderStatus" => $orderUP->status
+                "orderStatus" => $orderUP->status,
+                "orderUrl" => $orderUP->url
             ]];
 
         } catch (\Exception $e) {
