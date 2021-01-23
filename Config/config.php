@@ -28,7 +28,7 @@ return [
             ]
         ],
         'status' => [
-            'value' => '0',
+            'value' => 0,
             'name' => 'status',
             'type' => 'select',
             'props' => [
@@ -39,8 +39,8 @@ return [
               'hideDropdownIcon' => true,
               'newValueMode' => 'add-unique',
               'options' => [
-                ['label' => 'Activo','value' => '1'],
-                ['label' => 'Inactivo','value' => '0'],
+                ['label' => 'Activo','value' => 1],
+                ['label' => 'Inactivo','value' => 0],
               ]
             ]
         ],
