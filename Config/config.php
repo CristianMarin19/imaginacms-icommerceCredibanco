@@ -11,6 +11,7 @@ return [
             'value' => null,
             'name' => 'title',
             'type' => 'input',
+						'isTranslatable' => true,
             'props' => [
                 'label' => 'icommerce::common.title'
             ]
@@ -19,6 +20,7 @@ return [
             'value' => null,
             'name' => 'description',
             'type' => 'input',
+						'isTranslatable' => true,
             'props' => [
                 'label' => 'icommerce::common.description',
                 'type' => 'textarea',
