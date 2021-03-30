@@ -39,13 +39,13 @@ return [
               ]
             ]
         ],
-        'image' => [
+        'mainimage' => [
           'value' => (object)[],
           'name' => 'mediasSingle',
           'type' => 'media',
           'props' => [
             'label' => 'Image',
-            'zone' => 'image',
+            'zone' => 'mainimage',
             'entity' => "Modules\Icommerce\Entities\PaymentMethod",
             'entityId' => null
           ]
