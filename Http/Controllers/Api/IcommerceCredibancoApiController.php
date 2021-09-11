@@ -388,5 +388,33 @@ class IcommerceCredibancoApiController extends BaseApiController
         
 
     }
+  
+  
+  /**
+   * Init data
+   * @param Requests request
+   * @return mixed
+   */
+  public function calculations(Request $request){
+    
+    try {
+      
+      // Configuration
+      $shippingName = config('asgard.icommercecredibanco.config.paymentName');
+      $attribute = array('name' => $shippingName);
+      $paymentMethod = $this->paymentMethod->findByAttributes($attribute);
+      $response = $this->icommercecredibanco->calculate($request->all(),$paymentMethod->options);
+      
+    } catch (\Exception $e) {
+      //Message Error
+      $status = 500;
+      $response = [
+        'errors' => $e->getMessage()
+      ];
+    }
+    
+    return response()->json($response, $status ?? 200);
+    
+  }
 
 }

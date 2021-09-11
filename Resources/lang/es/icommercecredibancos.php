@@ -29,10 +29,14 @@ return [
     ],
     'form' => [
     ],
+    'formFields' => [
+      'maximumAmount' => 'Monto Máximo Permitido'
+    ],
     'messages' => [
         'info' => 'Remember to generate the keys and store them safely on the site',
     ],
     'validation' => [
+      'maximumAmount' => "El Monto de la orden excede el máximo permitido (:maximumAmount) para este método de pago"
     ],
     'statusTransaction' => [
         'approved'        => 'Aprobada',

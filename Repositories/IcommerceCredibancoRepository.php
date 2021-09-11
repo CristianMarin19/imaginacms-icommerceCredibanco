@@ -6,4 +6,6 @@ use Modules\Core\Repositories\BaseRepository;
 
 interface IcommerceCredibancoRepository extends BaseRepository
 {
+  
+  public function calculate($parameters,$conf);
 }
