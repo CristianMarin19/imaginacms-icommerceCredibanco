@@ -9,27 +9,42 @@ class EloquentIcommerceCredibancoRepository extends EloquentBaseRepository imple
 {
   
   function calculate($parameters,$conf){
-    
-
-    if(isset($conf->maximumAmount) && !empty($conf->maximumAmount)) {
-      if (isset($parameters["products"]["total"]))
-        if($parameters["products"]["total"]>$conf->maximumAmount){
-          $response["status"] = "error";
   
-          // Items
-          $response["items"] = trans("icommercecredibanco::icommercecredibancos.validation.maximumAmount",["maximumAmount" => formatMoney($conf->maximumAmount)]);
-          $response["msj"] = trans("icommercecredibanco::icommercecredibancos.validation.maximumAmount",["maximumAmount" =>formatMoney($conf->maximumAmount)]);
-          
-  
-          // Price
-          $response["price"] = 0;
-          $response["priceshow"] = false;
-          
-          return $response;
-        }
-        
-    
+    // Search Cart
+    if(isset($parameters["cartId"])){
+      $cartRepository = app('Modules\Icommerce\Repositories\CartRepository');
+      $cart = $cartRepository->find($parameters["cartId"]);
     }
+    
+    //validating Auth user if exist in the excluded Users For Maximum Amount
+    $excludeUser = false;
+    $authUser = \Auth::user();
+    if(isset($authUser->id) && isset($conf->excludedUsersForMaximumAmount) && !empty($conf->excludedUsersForMaximumAmount)){
+      if(in_array($authUser->id,$conf->excludedUsersForMaximumAmount)){
+        $excludeUser = true;
+      }
+    }
+    
+    //if there have not to exclude any user
+    if(!$excludeUser){
+      if(isset($conf->maximumAmount) && !empty($conf->maximumAmount)) {
+        if (isset($cart->total) || isset($parameters["total"]))
+          if(($cart->total ?? $parameters["total"]) > $conf->maximumAmount){
+            $response["status"] = "error";
+        
+            // Items
+            $response["items"] = trans("icommercecredibanco::icommercecredibancos.validation.maximumAmount",["maximumAmount" => formatMoney($conf->maximumAmount)]);
+            // Msj
+            $response["msj"] = trans("icommercecredibanco::icommercecredibancos.validation.maximumAmount",["maximumAmount" =>formatMoney($conf->maximumAmount)]);
+            // Price
+            $response["price"] = 0;
+            $response["priceshow"] = false;
+        
+            return $response;
+          }
+      }
+    }
+  
     $response["status"] = "success";
     
     // Items

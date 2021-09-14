@@ -30,7 +30,8 @@ return [
     'form' => [
     ],
     'formFields' => [
-      'maximumAmount' => 'Monto Máximo Permitido'
+      'maximumAmount' => 'Monto Máximo Permitido',
+      'excludedUsersForMaximumAmount' => 'Usuarios excluidos del monto máximo',
     ],
     'messages' => [
         'info' => 'Remember to generate the keys and store them safely on the site',
