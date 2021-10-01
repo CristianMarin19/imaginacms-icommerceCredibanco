@@ -109,8 +109,9 @@ class IcommerceCredibancoApiController extends BaseApiController
           ]))
         );
         
-        
         $redirectRoute = icommercecredibanco_processUrl($data->formUrl);
+
+        \Log::info('Module Icommercecredibanco: Credibanco RedirectRoute '.$redirectRoute);
         
       } else {
         \Log::info('Module Icommercecredibanco: Credibanco Response ErrorCode: ' . $data->errorCode);
@@ -121,7 +122,8 @@ class IcommerceCredibancoApiController extends BaseApiController
       
       // Response
       $response = ['data' => [
-        "redirectRoute" => $redirectRoute
+        "redirectRoute" => $redirectRoute,
+        "external" => true
       ]];
       
     } catch (\Exception $e) {
