@@ -16,7 +16,8 @@ class EloquentTransactionRepository extends EloquentBaseRepository implements Tr
      * @param  $config
      * @return transaction
      */
-
+    //Deprecated
+    /*
     public function create($order,$arrayOut,$type,$config){
 
         $data = array(
@@ -42,7 +43,7 @@ class EloquentTransactionRepository extends EloquentBaseRepository implements Tr
         return $transaction;
  
     }
-
+    */
     public function findByOrder($id){
 
         return $this->model->where('order_id',"=",$id)->first();
