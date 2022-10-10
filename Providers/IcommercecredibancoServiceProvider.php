@@ -49,7 +49,7 @@ class IcommercecredibancoServiceProvider extends ServiceProvider
         $this->publishConfig('icommercecredibanco', 'config');
         $this->publishConfig('icommercecredibanco', 'crud-fields');
 
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+        //$this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 
     /**
