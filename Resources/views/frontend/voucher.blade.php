@@ -53,12 +53,26 @@
 
                     <tr>
                         <td>Fecha:</td>
-                        <td>{{format_date($data->order->created_at,"%d-%m-%Y")}}</td>
+                        @php
+                            $newDate = format_date($data->order->created_at,"%d-%m-%Y");
+                            if(is_null($newDate)){
+                                $date = date_create($data->order->created_at);
+                                $newDate= date_format($date, 'd-m-Y');
+                            }
+                        @endphp
+                        <td>{{$newDate}}</td>
                     </tr>
 
                     <tr>
                         <td>Hora:</td>
-                        <td>{{format_date($data->order->created_at,"%r")}}</td>
+                        @php
+                            $newHour = format_date($data->order->created_at,"%r");
+                            if(is_null($newHour)){
+                                $date = date_create($data->order->created_at);
+                                $newHour = date_format($date, 'H:i:s');
+                            }
+                        @endphp
+                        <td>{{$newHour}}</td>
                     </tr>
 
                     <tr>
@@ -136,7 +150,10 @@
                 @endif
                 
                 <div class="text-center my-2">
+                    <a href="{{url('')}}" class="btn btn-primary">Home</a>
+                    {{--
                     <a href="{{route('homepage')}}" class="btn btn-primary">Home</a>
+                    --}}
                 </div>
 
             </div>
