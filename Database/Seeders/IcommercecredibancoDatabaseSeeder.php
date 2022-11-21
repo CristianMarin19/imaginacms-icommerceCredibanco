@@ -17,7 +17,9 @@ class IcommercecredibancoDatabaseSeeder extends Seeder
     {
 
         Model::unguard();
-
+      
+        $this->call(IcommercecredibancoModuleTableSeeder::class);
+        
         $name = config('asgard.icommercecredibanco.config.paymentName');
         $result = PaymentMethod::where('name',$name)->first();
 
