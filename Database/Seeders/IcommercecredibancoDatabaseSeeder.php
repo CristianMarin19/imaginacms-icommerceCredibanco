@@ -32,6 +32,7 @@ class IcommercecredibancoDatabaseSeeder extends Seeder
             $options['merchantId'] = "";
             $options['mode'] = "sandbox";
             $options['minimunAmount'] = 0;
+            $options['showInCurrencies'] = ["COP"];
 
             $titleTrans = 'icommercecredibanco::icommercecredibancos.single';
             $descriptionTrans = 'icommercecredibanco::icommercecredibancos.description';
