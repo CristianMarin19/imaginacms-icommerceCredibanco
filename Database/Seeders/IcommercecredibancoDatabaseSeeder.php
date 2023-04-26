@@ -5,67 +5,70 @@ namespace Modules\Icommercecredibanco\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Icommerce\Entities\PaymentMethod;
+use Modules\Isite\Jobs\ProcessSeeds;
 
 class IcommercecredibancoDatabaseSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
+  /**
+   * Run the database seeds.
+   *
+   * @return void
+   */
+  public function run()
+  {
 
-        Model::unguard();
-      
-        $this->call(IcommercecredibancoModuleTableSeeder::class);
-        
-        $name = config('asgard.icommercecredibanco.config.paymentName');
-        $result = PaymentMethod::where('name',$name)->first();
+    Model::unguard();
+    ProcessSeeds::dispatch([
+      "baseClass" => "\Modules\Icommercecredibanco\Database\Seeders",
+      "seeds" => ["IcommercecredibancoModuleTableSeeder"]
+    ]);
 
-        if(!$result){
-            $options['init'] = "Modules\Icommercecredibanco\Http\Controllers\Api\IcommerceCredibancoApiController";
+    $name = config('asgard.icommercecredibanco.config.paymentName');
+    $result = PaymentMethod::where('name', $name)->first();
 
-            $options['mainimage'] = null;
-            $options['user'] = "";
-            $options['password'] = "";
-            $options['merchantId'] = "";
-            $options['mode'] = "sandbox";
-            $options['minimunAmount'] = 0;
-            $options['showInCurrencies'] = ["COP"];
+    if (!$result) {
+      $options['init'] = "Modules\Icommercecredibanco\Http\Controllers\Api\IcommerceCredibancoApiController";
 
-            $titleTrans = 'icommercecredibanco::icommercecredibancos.single';
-            $descriptionTrans = 'icommercecredibanco::icommercecredibancos.description';
+      $options['mainimage'] = null;
+      $options['user'] = "";
+      $options['password'] = "";
+      $options['merchantId'] = "";
+      $options['mode'] = "sandbox";
+      $options['minimunAmount'] = 0;
+      $options['showInCurrencies'] = ["COP"];
 
-            foreach (['en', 'es'] as $locale) {
+      $titleTrans = 'icommercecredibanco::icommercecredibancos.single';
+      $descriptionTrans = 'icommercecredibanco::icommercecredibancos.description';
 
-                if($locale=='en'){
-                    $params = array(
-                        'title' => trans($titleTrans),
-                        'description' => trans($descriptionTrans),
-                        'name' => $name,
-                        'status' => 1,
-                        'options' => $options
-                    );
+      foreach (['en', 'es'] as $locale) {
 
-                    $paymentMethod = PaymentMethod::create($params);
-                    
-                }else{
+        if ($locale == 'en') {
+          $params = array(
+            'title' => trans($titleTrans),
+            'description' => trans($descriptionTrans),
+            'name' => $name,
+            'status' => 1,
+            'options' => $options
+          );
 
-                    $title = trans($titleTrans,[],$locale);
-                    $description = trans($descriptionTrans,[],$locale);
+          $paymentMethod = PaymentMethod::create($params);
 
-                    $paymentMethod->translateOrNew($locale)->title = $title;
-                    $paymentMethod->translateOrNew($locale)->description = $description;
+        } else {
 
-                    $paymentMethod->save();
-                }
+          $title = trans($titleTrans, [], $locale);
+          $description = trans($descriptionTrans, [], $locale);
 
-            }// Foreach
+          $paymentMethod->translateOrNew($locale)->title = $title;
+          $paymentMethod->translateOrNew($locale)->description = $description;
 
-        }else{
-            $this->command->alert("This method has already been installed !!");
+          $paymentMethod->save();
         }
-        
+
+      }// Foreach
+
+    } else {
+      $this->command->alert("This method has already been installed !!");
     }
+
+  }
 }
