@@ -16,7 +16,7 @@ class IcommercecredibancoDatabaseSeeder extends Seeder
   public function run()
   {
     ProcessSeeds::dispatch([
-      "baseClass" => "\Modules\Icommercepayzen\Database\Seeders",
+      "baseClass" => "\Modules\Icommercecredibanco\Database\Seeders",
       "seeds" => ["IcommercecredibancoModuleTableSeeder", "IcommercecredibancoSeeder"]
     ]);
   }
