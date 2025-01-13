@@ -1,10 +1,11 @@
 <?php
 
-namespace Modules\Icommercepayzen\Database\Seeders;
+namespace Modules\Icommercecredibanco\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Modules\Icommerce\Entities\PaymentMethod;
 
 class IcommercecredibancoSeeder extends Seeder
 {
